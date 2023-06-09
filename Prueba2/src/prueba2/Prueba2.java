@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -26,7 +28,7 @@ public class Prueba2 {
     private boolean[][] matrizBombas;     //esta es la matriz, true para que tiene una bomba, false vacio.
     private JButton[][] matrizBotones;
     
-    private int cantImagenes = 10;
+    private int cantImagenes = 11;
     private Image[] arregloImagenes;
     
     
@@ -113,19 +115,88 @@ public class Prueba2 {
                 
                 mJButton[i][j] = nueBtn;
                 
-                ActionListener al = new ActionListener(){
-                    public void actionPerformed(ActionEvent e) { 
-                        mostrarCasilla(nueBtn,X,Y);
-                    } 
-                };
+//                ActionListener al = new ActionListener(){
+//                    public void actionPerformed(ActionEvent e) { 
+//                        mostrarCasilla(nueBtn,X,Y);
+//                    } 
+//                };
+//                
+//                
+//                
+//                mJButton[i][j].addActionListener(al);
                 
                 
+                mJButton[i][j].addMouseListener(new MouseAdapter(){
+                    
+                    boolean pressed;
+                    
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        nueBtn.getModel().setArmed(true);
+                        nueBtn.getModel().setPressed(true);
+                        pressed = true;
+                    }
+                    
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        nueBtn.getModel().setArmed(false);
+                        nueBtn.getModel().setPressed(false);
+
+                        if (pressed) {
+                            if (SwingUtilities.isRightMouseButton(e)) {
+                                banderita(nueBtn,X,Y);
+                            }
+                            else {
+                                mostrarCasilla(nueBtn,X,Y);
+                            }
+                        }
+                        pressed = false;
+
+                    }
+                     
                 
-                mJButton[i][j].addActionListener(al);
+                });
+                
             }
         }
         
         return mJButton;        
+    }
+    
+    public void banderita(JButton jb,int indX, int indY){
+        //escalo la imagen a la altura del boton.
+        int tamanioPx = jb.getSize().height;        
+        
+        //por ahora: segun el indice X, pongo un nro o otro.
+        
+        int nro = chequearCasillas(indX, indY);
+        
+        
+        jb.setIcon(new ImageIcon(accederImagen(10,arregloImagenes).getScaledInstance(tamanioPx, tamanioPx, Image.SCALE_SMOOTH)));
+        
+        
+    }
+    
+    private void perder(){
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                mostrarCasillaPerder(matrizBotones[i][j], i , j);
+            }
+        }
+    }
+    
+    public void mostrarCasillaPerder(JButton jb,int indX, int indY){
+        //escalo la imagen a la altura del boton.
+        int tamanioPx = jb.getSize().height;        
+        
+        //por ahora: segun el indice X, pongo un nro o otro.
+        
+        int nro = chequearCasillas(indX, indY);
+        
+        System.out.println("nro: " +nro);
+               
+        jb.setIcon(new ImageIcon(accederImagen(nro,arregloImagenes).getScaledInstance(tamanioPx, tamanioPx, Image.SCALE_SMOOTH)));
+        
     }
     
     public void mostrarCasilla(JButton jb,int indX, int indY){
@@ -138,7 +209,11 @@ public class Prueba2 {
         
         System.out.println("nro: " +nro);
         
-        jb.setIcon(new ImageIcon(accederImagen(nro,arregloImagenes).getScaledInstance(tamanioPx, tamanioPx, Image.SCALE_SMOOTH)));
+        if(nro != 9)        
+            jb.setIcon(new ImageIcon(accederImagen(nro,arregloImagenes).getScaledInstance(tamanioPx, tamanioPx, Image.SCALE_SMOOTH)));
+        
+        else
+            perder();
     }
     
     //chequeo cuantas bombas hay alrededor de esa casilla
@@ -203,7 +278,8 @@ public class Prueba2 {
     void mostrarTodo(boolean M[][]){
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                matrizBotones[i][j].getActionListeners()[0].actionPerformed(null);
+                //matrizBotones[i][j].getActionListeners()[0].actionPerformed(null);
+                mostrarCasilla(matrizBotones[i][j], i , j);
             }
         }
     }
