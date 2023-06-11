@@ -24,7 +24,7 @@ import javax.imageio.ImageIO;
 public class Prueba2 {
 
     private static final int N = 10; //N es el tamaño de la matriz
-    private static final int cantBombas = 2;
+    private static final int cantBombas = 11;
     private static final int anchoPantalla = 600; //N es el tamaño de la matriz
     
     private boolean[][] matrizBombas;     //esta es la matriz, true para que tiene una bomba, false vacio.
