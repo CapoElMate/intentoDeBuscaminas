@@ -144,9 +144,9 @@ public class Prueba2 {
                             if (SwingUtilities.isRightMouseButton(e)) {
                                 //comportamiento click derecho:
                                 banderita(nueBtn,X,Y);
-                                comprobarSiGane();
-                                
                                 actualizarCantBanderines();
+                                
+                                comprobarSiGane();
                                 
                             }
                             else {
